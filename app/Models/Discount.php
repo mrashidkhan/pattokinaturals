@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Discount extends Model
+{
+    use HasFactory;
+
+    protected $table = 'discounts';
+
+    protected $fillable = [
+        'product_id',
+        'weight',
+        'orignal_price',
+        'discounted_price',
+        'is_most_bought',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function isMostBought()
+    {
+        return $this->is_most_bought;
+    }
+}
