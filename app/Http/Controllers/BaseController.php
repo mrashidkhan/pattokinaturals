@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\User;
 use Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 
 
@@ -33,9 +34,11 @@ class BaseController extends Controller
     }
 
 
-    public function cart(){
-        return view('front.cart');
-    }
+    // public function cart(){
+    //     return view('front.cart');
+    // }
+
+
 
 public function productview(Request $request){
     $id = $request->id;
@@ -43,7 +46,7 @@ public function productview(Request $request){
     $category_id=$product->category_id;
     $related_products = Product::where('category_id',$category_id)->get();
 
-    return view('front.productview1', compact('product','related_products'));
+    return view('front.productview', compact('product','related_products'));
 }
 
 public function user_login(){
@@ -52,8 +55,9 @@ public function user_login(){
 }
 public function logout()
 {
-    Auth::logout();
-    return redirect()->route('user_login');
+    Auth::logout(); // Log the user out
+    session()->flush(); // Clear all session data
+    return redirect()->route('user_login'); // Redirect to the login route
 }
 
 public function user_store(Request $request)

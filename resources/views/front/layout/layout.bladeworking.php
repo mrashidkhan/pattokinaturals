@@ -30,8 +30,6 @@
 
                 // Update the cart session via AJAX
                 updateCart(itemId, quantity);
-                // Reload the page
-        location.reload();
             });
         });
 
@@ -49,8 +47,6 @@
 
                     // Update the cart session via AJAX
                     updateCart(itemId, quantity);
-                    // Reload the page
-        location.reload();
                 } else {
                     // Optionally, you can show a message to the user
                     alert("Quantity cannot be less than 1.");
@@ -60,39 +56,23 @@
     });
 
     function updateCart(itemId, quantity) {
-    fetch(`/cart/update/${itemId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
-        },
-        body: JSON.stringify({
-            quantity: quantity
+        fetch(`/cart/update/${itemId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
+            },
+            body: JSON.stringify({
+                quantity: quantity
+            })
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data.message); // Log success message if needed
-
-        // Update the cart item quantity and price in the DOM
-        document.querySelector(`#item-quantity-${itemId}`).innerText = data.updatedQuantity;
-        document.querySelector(`#item-total-${itemId}`).innerText = data.itemTotal;
-
-        // Update the cart total price
-        document.querySelector('#cart-total').innerText = data.cartTotal;
-
-    })
-   // .catch(error => {
-   //     console.error('Error updating cart:', error);
-   //     alert('An error occurred while updating the item. Please try again.');
-   // });
-}
-
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message); // Log success message if needed
+            location.reload(); // Refresh the page to show updated cart
+        })
+        .catch(error => console.error('Error updating cart:', error));
+    }
 </script>
 //     function removeFromCart(itemId) {
 //     fetch(`/cart/remove/${itemId}`, {

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Discount;
 use Illuminate\Http\Request;
+use App\Models\Product;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
 
 class DiscountController extends Controller
 {
@@ -11,13 +14,15 @@ class DiscountController extends Controller
     public function index()
     {
         $discounts = Discount::with('product')->get();
-        return view('discounts.index', compact('discounts'));
+        return view('admin.discount.index', compact('discounts'));
     }
 
     // Show the form for creating a new discount
     public function create()
     {
-        return view('discounts.create');
+        $products = Product::all();
+        return view('admin.discount.add', compact('products'));
+
     }
 
     // Store a newly created discount in storage
@@ -41,14 +46,15 @@ class DiscountController extends Controller
         // Create the discount
         Discount::create($request->all());
 
-        return redirect()->route('discounts.index')->with('success', 'Discount created successfully.');
+        return redirect()->route('discount.list')->with('success', 'Discount created successfully.');
     }
 
     // Show the form for editing the specified discount
     public function edit($id)
     {
         $discount = Discount::findOrFail($id);
-        return view('discounts.edit', compact('discount'));
+        $products = Product::all();
+        return view('admin.discount.edit', compact('discount','products'));
     }
 
     // Update the specified discount in storage
@@ -77,15 +83,55 @@ class DiscountController extends Controller
         // Update the discount with the new data
         $discount->update($request->all());
 
-        return redirect()->route('discounts.index')->with('success', 'Discount updated successfully.');
+        return redirect()->route('discount.list')->with('success', 'Discount updated successfully.');
     }
 
     // Remove the specified discount from storage
-    public function destroy($id)
-    {
-        $discount = Discount::findOrFail($id);
-        $discount->delete();
+    // public function destroy($id)
+    // {
+    //     $discount = Discount::findOrFail($id);
+    //     $discount->delete();
 
-        return redirect()->route('discounts.index')->with('success', 'Discount deleted successfully.');
-    }
+    //     return redirect()->route('discount.list')->with('success', 'Discount deleted successfully.');
+    // }
+
+    // public function destroy(Request $request, Products $product)
+    // {
+    // // Check if the product exists and delete it
+    // if ($discount) {
+    //     $discount->delete();
+    //     return response()->json('success');
+    // } else {
+    //     return response()->json(['error' => 'Discount not found'], 404);
+    // }
+    // }
+
+    // public function destroy(Request $request, Discount $discount)
+    // {
+    //     $id = $request->id;
+    //     $discount = Discount::find($id);
+
+    //     if ($discunt) {
+    //         $discount->delete();
+    //         return response()->json('success');
+    //     } else {
+    //         return response()->json('Discount not found', 404);
+    //     }
+    // }
+
+    public function discountDelete(Request $request, $id)
+     {
+        //  $discountCategories = PhotoCategory::with('photoGalleries')->get(); // Eager load photo galleries if needed
+
+         $discount = Discount::findOrFail($id);
+
+         if ($request->isMethod('post')) {
+             $discount->delete();
+             Session::flash('success', "You have successfully deleted Discount.");
+             return Redirect::route('discount.list');
+         }
+
+        //  return view('admin.discount.discount_delete', ['discount' => $discount]);
+        return view('admin.discount.delete', compact('discount'));
+     }
 }

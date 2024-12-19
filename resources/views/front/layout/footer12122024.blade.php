@@ -7,7 +7,7 @@
                 <h2 class="fw-bold text-primary mb-4">Pattoki<span class="text-secondary">Naturals</span></h2>
                 <p>Each product is carefully selected to ensure quality and purity, allowing you to make healthier choices for you and your family.</p>
             </div>
-
+            
             <!-- Address Section -->
             <div class="col-lg-3 col-md-6 mb-4">
                 <h4 class="text-light mb-4">Address</h4>
@@ -20,7 +20,7 @@
                     </p>
                 </address>
             </div>
-
+            
             <!-- Quick Links Section -->
             <div class="col-lg-3 col-md-6 mb-4">
                 <h4 class="text-light mb-4">Quick Links</h4>
@@ -34,7 +34,7 @@
                     <i class="fa fa-chevron-right me-2"></i>Our Products
                 </a>
             </div>
-
+            
             <!-- Social Media Section -->
             <div class="col-lg-3 col-md-6 mb-4">
                 <h4 class="text-light mb-4">Follow Us</h4>
@@ -59,7 +59,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Footer Bottom -->
     <div class="container-fluid text-light py-4" style="background: #333;">
         <div class="container">
@@ -68,7 +68,7 @@
                     &copy; <a href="{{ route('home') }}" class="text-primary">PattokiNaturals</a>, All Rights Reserved.
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    Designed by <a href="https://htmlcodex.com" target="_blank" rel="noopener noreferrer" class="text-light">HTML Codex</a> | Distributed by
+                    Designed by <a href="https://htmlcodex.com" target="_blank" rel="noopener noreferrer" class="text-light">HTML Codex</a> | Distributed by 
                     <a href="https://themewagon.com" target="_blank" rel="noopener noreferrer" class="text-light">ThemeWagon</a>
                 </div>
             </div>
@@ -76,4 +76,3 @@
     </div>
 </div>
 <!-- Footer End -->
-

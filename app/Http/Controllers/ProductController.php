@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\ProductDetails;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
 
 class ProductController extends Controller
 {
@@ -15,7 +17,8 @@ class ProductController extends Controller
     public function index()
     {
         $products=Product::get();
-        return view('admin.product.index', compact('products'));
+        $isDisabled = true;
+        return view('admin.product.index', compact('products','isDisabled'));
 
     }
 
@@ -46,7 +49,7 @@ class ProductController extends Controller
             $fileName = date('dmY').time().'.'.$image_url->getClientOriginalExtension();
             $image_url->move(public_path('/uploads'), $fileName);
             $data['image_url'] = $fileName;
-            
+
         }
 
         // Create new product
@@ -69,7 +72,7 @@ class ProductController extends Controller
     public function edit(Request $request, Category $category)
     {
         $id = $request->id;
-        $product = Products::findOrFail($id);
+        $product = Product::findOrFail($id);
         $categories = Category::whereNotNull('category_id')->get();
         return view('admin.product.edit', compact('product', 'categories'));
     }
@@ -81,30 +84,38 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         // Find the product by id
-        $product = Products::findOrFail($id);
+        $product = Product::findOrFail($id);
 
         // Validate the incoming request
         $request->validate([
-            'name' => 'required|string|max:255',
+            'product_name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'base_price' => 'required|numeric',
+            'image_url' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'nullable|string|max:16384',
         ]);
 
         // Prepare the data for updating the product
         $data = [
-            'name' => $request->name,
+            'product_name' => $request->product_name,
             'category_id' => $request->category_id,
-            'price' => $request->price,
+            'base_price' => $request->base_price,
+            'image_url' => $request->image_url,
+            'description' => $request->description,
         ];
 
         // Handle image upload if an image is provided
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $fileName = date('dmY') . time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('/uploads'), $fileName);
-            $data['image'] = $fileName;
-        }
+        // Check if a new image has been uploaded
+    if ($request->hasFile('image_url')) {
+        // Handle the new image upload
+        $image = $request->file('image_url');
+        $fileName = date('dmY') . time() . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('/uploads/'), $fileName);
+        $data['image_url'] = $fileName; // Update the image_url in the data array
+    } else {
+        // If no new image is uploaded, keep the existing image_url
+        $data['image_url'] = $product->image_url; // Retain the existing image_url
+    }
 
         // Update the product with the provided data
         $product->update($data);
@@ -113,16 +124,32 @@ class ProductController extends Controller
         return redirect()->route('product.list')->with('success', 'Product updated successfully!');
     }
 
-public function destroy(Request $request, Products $product)
-{
-    // Check if the product exists and delete it
-    if ($product) {
-        $product->delete();
-        return response()->json('success');
-    } else {
-        return response()->json(['error' => 'Product not found'], 404);
-    }
-}
+// public function destroy(Request $request, Products $product)
+// {
+//     // Check if the product exists and delete it
+//     if ($product) {
+//         $product->delete();
+//         return response()->json('success');
+//     } else {
+//         return response()->json(['error' => 'Product not found'], 404);
+//     }
+// }
+
+public function productDelete(Request $request, $id)
+     {
+
+         $product = Product::findOrFail($id);
+
+         if ($request->isMethod('post')) {
+             $product->delete();
+             Session::flash('success', "You have successfully deleted Product.");
+             return Redirect::route('product.list');
+         }
+
+
+        return view('admin.product.delete', compact('product'));
+     }
+
 public function extraDetails(Request $request)
 {
     $id = $request->id;

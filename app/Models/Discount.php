@@ -14,7 +14,7 @@ class Discount extends Model
     protected $fillable = [
         'product_id',
         'weight',
-        'orignal_price',
+        'original_price',
         'discounted_price',
         'is_most_bought',
     ];

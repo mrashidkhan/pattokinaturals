@@ -3,7 +3,7 @@
         <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
                 <a href="{{ route('home') }}" class="site_title">
-                    <i class="fa fa-paw"></i> 
+                    <i class="fa fa-paw"></i>
                     <span>Pattoki Naturals</span>
                 </a>
             </div>
@@ -31,13 +31,13 @@
                     <ul class="nav side-menu">
                         <li>
                             <a href="{{ route('admin.dashboard') }}">
-                                <i class="fa fa-home"></i> Dashboard 
+                                <i class="fa fa-home"></i> Dashboard
                                 <span class="fa fa-chevron-down"></span>
                             </a>
                         </li>
                         <li>
                             <a>
-                                <i class="fa fa-list"></i> Category Manager 
+                                <i class="fa fa-list"></i> Category Manager
                                 <span class="fa fa-chevron-down"></span>
                             </a>
                             <ul class="nav child_menu" style="display: none;">
@@ -47,7 +47,7 @@
                         </li>
                         <li>
                             <a>
-                                <i class="fa fa-product-hunt"></i> Product Manager 
+                                <i class="fa fa-product-hunt"></i> Product Manager
                                 <span class="fa fa-chevron-down"></span>
                             </a>
                             <ul class="nav child_menu" style="display: none;">
@@ -55,11 +55,23 @@
                                 <li><a href="{{ route('product.create') }}">Create</a></li>
                             </ul>
                         </li>
+
+                        <li>
+                            <a>
+                                <i class="fa fa-product-hunt"></i> Discount Manager
+                                <span class="fa fa-chevron-down"></span>
+                            </a>
+                            <ul class="nav child_menu" style="display: none;">
+                                <li><a href="{{ route('discount.list') }}">List</a></li>
+                                <li><a href="{{ route('discount.create') }}">Create</a></li>
+                            </ul>
+                        </li>
+
                         <li>
                             <a><i class="fa fa-product-hunt"></i> User Manager<span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu" style="display: none;">
                                 <li><a href="{{ route('admin.users') }}">List</a></li>
-                                
+
                             </ul>
                         </li>
                     </ul>

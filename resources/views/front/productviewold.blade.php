@@ -50,63 +50,10 @@
                             <small class="pt-1">(99 Reviews)</small>
                         </div>
 
-                        <h2 class="price text-danger ml-5">Rs.{{number_format($product->price)}}</h2>
+                        <h2 class="price text-danger ">Rs.{{number_format($product->price)}}</h2>
 
-                        {{-- <p>{{$product->ProductDetails->description}}.</p> --}}
-                        <div class="price-selection">
-                            <h4 class="ml-5">Select Quantity:</h4>
-                            <form action="{{ route('cart', $product->id) }}" method="POST">
-                                @csrf
-
-                                <!-- 500 Gram Option -->
-                                <div class="form-check border border-dark p-3 mb-2 ml-5 mr-5" style="border-radius: 5px;">
-                                    <input class="form-check-input" type="radio" name="quantity" id="quantity1" value="500" checked>
-                                    <label class="form-check-label" for="quantity1">
-                                        500 Gram -
-                                        <span class="discounted-rate" style="font-size: 1.2em; font-weight: bold;">Rs 1,300.00</span>
-                                    </label>
-                                    <div class="stock-message" style="font-size: 0.9em; color: #dc3545;">
-                                        Only 15 kg left in stock |
-                                        <span class="original-price" style="text-decoration: line-through; color: #6c757d;">
-                                            Rs 1,500.00
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- 1K Option -->
-                                <div class="form-check border border-dark p-3 mb-2 ml-5 mr-5" style="border-radius: 5px;">
-                                    <input class="form-check-input" type="radio" name="quantity" id="quantity2" value="1000">
-                                    <label class="form-check-label" for="quantity2">
-                                        1K -
-                                        <span class="discounted-rate" style="font-size: 1.2em; font-weight: bold;">Rs 2,400.00</span>
-                                    </label>
-                                    <div class="stock-message" style="font-size: 0.9em; color: #dc3545;">
-                                        Only 10 kg left in stock |
-                                        <span class="original-price" style="text-decoration: line-through; color: #6c757d;">
-                                            Rs 2,800.00
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <!-- 2KG Option -->
-                                <div class="form-check border border-dark p-3 mb-2 ml-5 mr-5" style="border-radius: 5px;">
-                                    <input class="form-check-input" type="radio" name="quantity" id="quantity3" value="2000">
-                                    <label class="form-check-label" for="quantity3">
-                                        2KG -
-                                        <span class="discounted-rate" style="font-size: 1.2em; font-weight: bold;">Rs 4,400.00</span>
-                                    </label>
-                                    <div class="stock-message" style="font-size: 0.9em; color: #dc3545;">
-                                        Only 5 kg left in stock |
-                                        <span class="original-price" style="text-decoration: line-through; color: #6c757d;">
-                                            Rs 5,000.00
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="btn btn-dark mt-3 ml-5">Add to Cart</button>
-                            </form>
-                        </div>
-                        {{-- <a href="cart.php" class="btn btn-dark"><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a> --}}
+                        <p>{{$product->ProductDetails->description}}.</p>
+                        <a href="cart.php" class="btn btn-dark"><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
                     </div>
                 </div>
 
