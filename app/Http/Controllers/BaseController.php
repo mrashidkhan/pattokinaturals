@@ -76,8 +76,8 @@ public function user_store(Request $request)
 public function loginCheck(Request $request)
 {
     $data = [
-        'email' => $request->email,
-        'password' => $request->password,
+        'email' => $request->emaillogin,
+        'password' => $request->passwordlogin,
     ];
     if (Auth::attempt($data)) {
         return redirect()->route('home');

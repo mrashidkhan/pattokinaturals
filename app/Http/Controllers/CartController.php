@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Customer;
 use App\Models\Product; // Assuming you have a Product model
 use Illuminate\Support\Facades\Session; // For session management
 
@@ -15,6 +16,64 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         return view('front.cart', compact('cart'));
+    }
+
+    public function viewCheckout(Request $request)
+    {
+        // Retrieve the cart from the session
+        $cart = session()->get('cart', []);
+        // Check if the user is authenticated
+        $customerData = null;
+
+        // If the user is authenticated, retrieve their data
+        // Check if the user is authenticated
+        if ($request->user()) {
+            // Attempt to retrieve the customer data based on the authenticated user's ID
+            $customerData = Customer::where('user_id', $request->user()->id)->first();
+        }
+
+        // If customerData is still null, it means the customer does not exist
+        // You can leave customerData as null, or initialize it with an empty object
+        if (!$customerData) {
+            $customerData = new Customer(); // Create a new instance of Customer with empty fields
+        }
+
+        return view('front.checkout', compact('cart', 'customerData'));
+    }
+
+    public function updateCustomer(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'shipping_address' => 'required|string|max:255',
+            'billing_address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'postal_code' => 'nullable|string|max:20',
+            'phone' => 'required|string|max:20',
+            'country' => 'required|string|max:255',
+        ]);
+
+        // Update the customer information
+        if ($request->user()) {
+            $customer = Customer::where('email', $request->user()->email)->first();
+            if ($customer) {
+                $customer->update($request->only([
+                    'first_name',
+                    'last_name',
+                    'shipping_address',
+                    'billing_address',
+                    'city',
+                    'postal_code',
+                    'phone',
+                    'country',
+                ]));
+            }
+        }
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Customer information updated successfully.');
     }
 
     public function addToCart(Request $request, $productId)
@@ -31,16 +90,19 @@ class CartController extends Controller
         // Find the selected discount
         $discount = $product->discounts()->findOrFail($request->discount_id);
 
-
+        // Retrieve the last used ID from the session, or initialize it if it doesn't exist
+        $lastId = session('last_cart_item_id', 0);
         // Prepare the cart item
-    $cartItem = [
-        'id' => $product->id,
-        'name' => $product->product_name, // Assuming the product has a product_name attribute
-        'weight' => $request->weight,
-        'discount_id' => $discount->id,
-        'price' => is_numeric($discount->discounted_price) ? (float)$discount->discounted_price : 0.0, // Ensure price is numeric
-        'quantity' => is_numeric(1) ? (int)1 : 1, // Ensure quantity is numeric (default to 1)
-    ];
+        $cartItem = [
+            'id' => ++$lastId, // Increment the last ID and assign it
+            'name' => $product->product_name, // Assuming the product has a product_name attribute
+            'weight' => $request->weight,
+            'discount_id' => $discount->id,
+            'price' => is_numeric($discount->discounted_price) ? (float) $discount->discounted_price : 0.0, // Ensure price is numeric
+            'quantity' => is_numeric(1) ? (int) 1 : 1, // Ensure quantity is numeric (default to 1)
+        ];
+        // Store the updated last ID back in the session
+        session(['last_cart_item_id' => $lastId]);
 
         // Add the item to the cart stored in the session
         $cart = Session::get('cart', []);
@@ -67,10 +129,33 @@ class CartController extends Controller
     //     return redirect()->route('cart.view')->with('success', 'Item removed from cart successfully!');
     // }
 
+    // public function removeItemFromCart($itemId)
+    // {
+    //     // $itemId = 3;
+    //     // console.log($itemId);
+    //     $cart = session()->get('cart', []);
+    //     unset($cart[$itemId]);
+    //     // console.log($cart);
+    //     // console.log ($cart[$itemId]);
+    //     // Check if the item exists in the cart
+    //     // if (isset($cart[$itemId])) {
+    //     //     // Remove the item from the cart
+    //     //     unset($cart[$itemId]);
+
+    //     //     // Update the session with the modified cart
+    //     //     session()->put('cart', $cart);
+
+    //         // Return a success response
+    //         return response()->json(['message' => 'Item removed successfully']);
+    //     }
+
+    //     // Return an error response if the item was not found
+    //     return response()->json(['message' => 'Item not found'], 404);
+    // }
     public function removeItemFromCart($itemId)
     {
-        // Retrieve the cart from the session
-        $cart = session()->get('cart', []);
+        // Retrieve the current cart from the session
+        $cart = session('cart', []);
 
         // Check if the item exists in the cart
         if (isset($cart[$itemId])) {
@@ -78,17 +163,17 @@ class CartController extends Controller
             unset($cart[$itemId]);
 
             // Update the session with the modified cart
-            session()->put('cart', $cart);
+            session(['cart' => $cart]);
 
             // Return a success response
-            return response()->json(['message' => 'Item removed successfully']);
+            return response()->json(['message' => 'Item removed successfully.']);
         }
 
-        // Return an error response if the item was not found
-        return response()->json(['message' => 'Item not found'], 404);
+        // If the item was not found, return a not found response
+        return response()->json(['message' => 'Item not found in cart kya hai yar.'], 404);
     }
 
-    public function checkout(Request $request)
+    public function order(Request $request)
     {
         // Retrieve the cart from the session
         $cart = session()->get('cart', []);
@@ -144,5 +229,14 @@ class CartController extends Controller
 
         // Return a response indicating success
         return response()->json(['success' => true, 'message' => 'Cart updated successfully!']);
+    }
+
+    public function showCart()
+    {
+        // Retrieve the cart from the session
+        $cart = session('cart', []);
+
+        // Return the view with the cart data
+        return view('mycart', compact('cart'));
     }
 }

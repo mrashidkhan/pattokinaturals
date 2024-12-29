@@ -21,11 +21,11 @@
                         <form action="{{ route('loginCheck') }}" method="POST">
                             @csrf
                             <div class="form-group mb-3">
-                                <input type="email" name="emaillogin" id="email" class="form-control"
+                                <input type="email" name="emaillogin" id="emaillogin" class="form-control"
                                     placeholder="Enter your email" required>
                             </div>
                             <div class="form-group mb-3">
-                                <input type="password" name="passwordlogin" id="password" class="form-control"
+                                <input type="password" name="passwordlogin" id="passwordlogin" class="form-control"
                                     placeholder="Enter your password" required>
                             </div>
                             <div class="form-group mb-3">

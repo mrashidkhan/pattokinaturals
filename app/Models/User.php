@@ -45,4 +45,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function customer()
+    {
+        return $this->hasOne(Customer::class, 'user_id', 'id');
+    }
+
+    private function authorizeAdmin()
+{
+    if (!Auth::check() || !Auth::user()->isAdmin()) {
+        return redirect()->route('user_login')->with('error', 'You are not authorized to access this page.');
+    }
+}
+public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
 }

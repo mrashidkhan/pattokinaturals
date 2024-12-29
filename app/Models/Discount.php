@@ -28,4 +28,10 @@ class Discount extends Model
     {
         return $this->is_most_bought;
     }
+
+    // Define the relationship with the OrderItem model
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'discount_id');
+    }
 }

@@ -68,6 +68,17 @@
                         </li>
 
                         <li>
+                            <a>
+                                <i class="fa fa-ticket"></i> Coupon Manager
+                                <span class="fa fa-chevron-down"></span>
+                            </a>
+                            <ul class="nav child_menu" style="display: none;">
+                                <li><a href="{{ route('coupon.list') }}">List</a></li>
+                                <li><a href="{{ route('coupon.create') }}">Create</a></li>
+                            </ul>
+                        </li>
+
+                        <li>
                             <a><i class="fa fa-product-hunt"></i> User Manager<span class="fa fa-chevron-down"></span></a>
                             <ul class="nav child_menu" style="display: none;">
                                 <li><a href="{{ route('admin.users') }}">List</a></li>

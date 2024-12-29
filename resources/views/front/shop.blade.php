@@ -35,7 +35,9 @@
         <div class="card h-100">
             <a href="{{ route('productview', $value->id) }}">
                 <div class="position-relative">
-                    <img class="card-img-top" src="{{ asset('uploads/' . $value->image) }}" alt="{{ $value->name }}" style="height: 200px; object-fit: cover;">
+                    {{-- <img class="card-img-top" src="{{ asset('uploads/' . $value->image) }}" alt="{{ $value->name }}" style="height: 200px; object-fit: cover;"> --}}
+                    <img class="img-fluid" src="{{ asset('uploads/' . $value->image_url) }}" alt=""
+                                style="width: 100%; height: 200px; object-fit: cover;">
                     <div class="bg-secondary text-white position-absolute top-0 start-0 m-3 py-1 px-3 rounded">New</div>
                 </div>
             </a>
@@ -45,7 +47,7 @@
                     <a href="{{ route('productview', $value->id) }}" class="text-dark text-decoration-none">{{ $value->name }}</a>
                 </h5>
                 <p class="card-text">
-                    <span class="text-primary fw-bold">Rs.{{ number_format($value->price) }}</span>
+                    <span class="text-primary fw-bold">Rs.{{ number_format($value->base_price) }}</span>
                     <!--<span class="text-muted text-decoration-line-through ms-2">{{ $value->original_price }}</span>-->
                 </p>
             </div>
@@ -57,7 +59,7 @@
                     </a>
                   </small>
                   <small class="w-50 text-center py-2">
-                    <a class="text-white" href="#">
+                    <a class="text-white" href="{{ route('productview', $value->id) }}">
                       <i class="fa fa-shopping-bag text-secondary me-2"></i>Add to cart
                     </a>
                   </small>

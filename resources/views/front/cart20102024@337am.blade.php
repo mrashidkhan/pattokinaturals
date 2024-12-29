@@ -32,14 +32,7 @@
             </div>
         @endif
 
-        @php
-            $subtotal = 0; // Initialize subtotal variable
-            $couponDiscount = 0; // Initialize coupon discount variable
-            $shipping = 0; // Initialize shipping variable
-            $grandTotal = 0; // Initialize grand total variable
-        @endphp
-
-        <section class="section-9 pt-1">
+        <section class=" section-9 pt-1">
             <div class="container">
                 <div class="row">
                     <div class="col-md-8">
@@ -58,19 +51,32 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{-- @foreach (session('cart') as $item) --}}
-                                        @foreach (session('cart', []) as $key => $item)
-                                            <!-- Use $key to access the array key -->
+                                        @php
+    $subtotal = 0; // Initialize subtotal variable
+    $couponDiscount = 0; // Initialize coupon discount variable
+@endphp
+
+                                        @foreach (session('cart') as $item)
                                             <tr>
                                                 @php
-                                                    $itemTotalPrice = $item['price'] * $item['quantity']; // Calculate total price for the current item
-                                                    $subtotal += $itemTotalPrice; // Add to subtotal
-                                                @endphp
+        $itemTotalPrice = $item['price'] * $item['quantity']; // Calculate total price for the current item
+        $subtotal += $itemTotalPrice; // Add to subtotal
+    @endphp
+    @php
+    // Determine shipping cost based on subtotal
+    $shipping = $subtotal > 5000 ? 0 : 500;
+    // Calculate the grand total
+    $grandTotal = $subtotal + $shipping - $couponDiscount;
+
+    // Store grandTotal in the session
+    session(['grantTotal' => $grandTotal]);
+@endphp
                                                 <td>
                                                     {{ number_format($item['id']) }}
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center justify-content-left">
+
                                                         <h6 class="ml-2">{{ $item['name'] }}</h6>
                                                     </div>
                                                 </td>
@@ -94,16 +100,20 @@
                                                             <button class="btn btn-sm btn-dark btn-plus p-2 pt-1 pb-1"
                                                                 data-id="{{ $item['id'] }}">
                                                                 <i class="fa fa-plus"></i>
-                                                                </ </button>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td class="total-price" data-price="{{ $item['price'] }}">
                                                     Rs{{ number_format($item['price'] * $item['quantity'], 2) }}
                                                 </td>
+                                                {{-- <td>
+                                                    <button class="btn btn-sm btn-danger" onclick="removeFromCart('{{ $item['id'] }}')">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </td> --}}
                                                 <td>
-                                                    <button class="btn btn-sm btn-danger"
-                                                        onclick="removeFromCart({{ $key }})">
+                                                    <button class="btn btn-sm btn-danger" onclick="removeFromCart('{{ $item['id'] }}')">
                                                         <i class="fa fa-times"></i>
                                                     </button>
                                                 </td>
@@ -111,45 +121,19 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-
                             @else
-
+                                <p>
                                 <h1> Your cart is empty. </h1>
-
+                                </p>
                             @endif
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card cart-summery">
                             <div class="sub-title">
-                                <h2 class="bg-white">Cart Summary</h2>
+                                <h2 class="bg-white">Cart Summary</h3>
                             </div>
                             <div class="card-body">
-                                @php
-                                    // Initialize variables
-                                    $subtotal = 0; // Initialize subtotal variable
-                                    $couponDiscount = 0; // Initialize coupon discount variable
-                                    $shipping = 0; // Initialize shipping variable
-                                    $grandTotal = 0; // Initialize grand total variable
-
-                                    // Check if the cart is not empty
-                                    if (session('cart') && count(session('cart')) > 0) {
-                                        // Calculate subtotal
-                                        foreach (session('cart') as $item) {
-                                            $itemTotalPrice = $item['price'] * $item['quantity']; // Calculate total price for the current item
-                                            $subtotal += $itemTotalPrice; // Add to subtotal
-                                        }
-
-                                        // Determine shipping cost based on subtotal
-                                        $shipping = $subtotal > 5000 ? 0 : 500;
-                                    }
-
-                                    // Calculate the grand total
-                                    $grandTotal = $subtotal + $shipping - $couponDiscount;
-                                    session(['newTotal' => $grandTotal]);
-                                    // Store grandTotal in the session
-                                    session(['grantTotal' => $grandTotal]);
-                                @endphp
                                 <div class="d-flex justify-content-between pb-2">
                                     <div>Subtotal</div>
                                     <div>Rs{{ number_format($subtotal, 2) }}</div>
@@ -158,33 +142,18 @@
                                     <div>Shipping</div>
                                     <div>Rs{{ number_format($shipping, 2) }}</div>
                                 </div>
-
                                 <div class="d-flex justify-content-between summery-end">
-                                    <div>Grand Total</div>
-
+                                    <div>Total</div>
                                     <div>Rs{{ number_format($grandTotal, 2) }}</div>
                                 </div>
-
-
-                                <div class="d-flex justify-content-between summery-end">
-                                    <div>Coupon Discount</div>
-                                    <div>Rs{{ number_format(session('coupondiscount', 0), 2) }}</div>
-
-                                </div>
-
-                                {{-- <div class="pt-5">
-                                    <a href="{{ route('cart.checkout') }}" class="btn-dark btn btn-block w-100">Proceed to
-                                        Checkout</a>
-                                </div> --}}
                                 <div class="pt-5">
-                                    <a href="{{ route('cart.checkout') }}" class="btn-dark btn btn-block w-100" id="checkoutButton">Proceed to Checkout</a>
+                                    <a href="login.php" class="btn-dark btn btn-block w-100">Proceed to Checkout</a>
                                 </div>
                             </div>
                         </div>
-
+                        
                         <div class="input-group apply-coupon mt-4">
-                            <input type="text" id="coupon_code" name="coupon" placeholder="Coupon Code"
-                                class="form-control">
+                            <input type="text" id="coupon_code" placeholder="Coupon Code" class="form-control">
                             <button class="btn btn-dark" type="button" id="apply_coupon_button">Apply Coupon</button>
                         </div>
                         <div id="coupon_message" class="mt-2"></div>
@@ -193,71 +162,55 @@
             </div>
         </section>
     </main>
-
     <script>
         function removeFromCart(itemId) {
-            // const newItemId = Number(itemId) - 1;
-            // fetch(`/cart/remove/${itemId}`, {
-            // itemId = 2;
             fetch(`/cart/remove/${itemId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => {
-                    // console.log(response);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data.message); // Log success message if needed
-                    location.reload(); // Refresh the page to show updated cart
-                })
-                .catch(error => {
-                    console.error('Error removing item from cart:', error);
-                    alert('An error occurred while removing the item. Please try again.');
-                });
+                method: 'DELETE', // Ensure method is DELETE
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.message); // Log success message if needed
+                location.reload(); // Refresh the page to show updated cart
+            })
+            .catch(error => {
+                console.error('Error removing item from cart:', error);
+                alert('An error occurred while removing the item. Please try again.');
+            });
         }
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#apply_coupon_button').click(function() {
-                var couponCode = $('#coupon_code').val();
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#apply_coupon_button').click(function() {
+            var couponCode = $('#coupon_code').val();
 
-                $.ajax({
-                    url: '{{ route('apply.coupon') }}',
-                    type: 'POST',
-                    data: {
-                        coupon_code: couponCode,
-                        _token: '{{ csrf_token() }}' // Include CSRF token for security
-                    },
-                    success: function(response) {
-                        $('#coupon_message').text(response.message);
-
-                    },
-                    error: function(xhr) {
-                        $('#coupon_message').text(xhr.responseJSON.message);
-                    }
-                });
-
+            $.ajax({
+                url: '{{ route('apply.coupon') }}',
+                type: 'POST',
+                data: {
+                    coupon_code: couponCode,
+                    _token: '{{ csrf_token() }}' // Include CSRF token for security
+                },
+                success: function(response) {
+                    $('#coupon_message').text(response.message);
+                    // Optionally update the total displayed on the page
+                    // $('#total_amount').text(response.new_total);
+                },
+                error: function(xhr) {
+                    $('#coupon_message').text(xhr.responseJSON.message);
+                }
             });
         });
-    </script>
-    <script>
-        document.getElementById('checkoutButton').addEventListener('click', function(event) {
-            // Assuming $grandTotal is available in JavaScript
-            var grandTotal = {{ $grandTotal }}; // Make sure to pass the PHP variable to JavaScript
-
-            if (grandTotal < 1000) {
-                event.preventDefault(); // Prevent the default action of the link
-                alert('Can not proceed to checkout due to empty cart');
-            }
-        });
-    </script>
+    });
+</script>
 @endsection

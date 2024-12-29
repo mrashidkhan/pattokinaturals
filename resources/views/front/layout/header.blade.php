@@ -83,7 +83,7 @@
             }
         });
     </script> --}}
-    
+
 
 
 </head>
@@ -113,11 +113,14 @@
             <button class="navbar-toggler me-4" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto p-2 p-lg-0">
                     <a href="{{ route('home') }}" class="nav-item nav-link text-success fw-bold" aria-label="Home">Home</a>
                     <a href="{{ route('shop') }}" class="nav-item nav-link text-success" aria-label="Products">Shop</a>
                     <a href="{{ route('aboutus') }}" class="nav-item nav-link text-success" aria-label="About Us">About Us</a>
+                    <a href="{{ route('my.orders') }}" class="nav-item nav-link text-success" aria-label="My Orders">My Orders</a>
+
                     <a href="{{ route('contactus') }}" class="nav-item nav-link text-success" aria-label="Contact Us">Contact Us</a>
                     <a href="{{ route('cart.view') }}" class="nav-item nav-link text-success" aria-label="Cart"><i class="bi bi-cart fs-6"></i> Cart</a>
                     @if (Auth::check())
@@ -125,6 +128,12 @@
                     @else
                         <a href="{{ route('user_login') }}" class="nav-item nav-link text-success" aria-label="Log In"><i class="fas fa-sign-in-alt"></i> Login</a>
                     @endif
+                    @if (Auth::check())
+                <span class="navbar-text text-success me-3">
+                    Welcome, {{ Auth::user()->name }} <!-- Display the authenticated user's name -->
+                </span>
+                @endif
+
                 </div>
             </div>
         </nav>

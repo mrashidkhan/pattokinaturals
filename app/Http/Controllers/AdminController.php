@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Hash;
 class AdminController extends Controller
 {
-    
+
     public function login(){
-        return view('admin.login');
+
+        // return view('login');
+        return redirect()->route('user_login');
     }
     public function makeLogin(Request $request){
         $data=array(
@@ -25,7 +27,7 @@ class AdminController extends Controller
         }
     }
     public function dashboard(){
-        
+
         return view('admin.dashboard');
     }
 

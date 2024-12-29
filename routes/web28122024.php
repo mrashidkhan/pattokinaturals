@@ -19,72 +19,17 @@ use App\Http\Controllers\CheckoutController;
 // Route::post('/login', [CustomerAuthController::class, 'login']);
 // Route::post('/logout', [CustomerAuthController::class, 'logout']);
 
-// Route::group(['middleware' => 'auth'], function () {
-//     Route::get('/coupons/create', [CouponController::class, 'create'])->name('coupon.create');
-//     Route::post('/coupons/add', [CouponController::class, 'store'])->name('coupon.store');
-//     Route::get('/coupons', [CouponController::class, 'index'])->name('coupon.list');
-//     Route::get('/coupons/edit/{id}', [CouponController::class, 'edit'])->name('coupon.edit');
-//     Route::put('/coupons/update/{id}', [CouponController::class, 'update'])->name('coupon.update');
-//     // Route::post('/coupons/delete/{id}', [CouponController::class, 'destroy'])->name('coupon.delete');
-//     Route::delete('/coupons/delete/{id}', [CouponController::class, 'destroy'])->name('coupon.delete');
-//     Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('apply.coupon');
-// });
-
-use App\Http\Controllers\OrderController;
-
-Route::get('/my-orders/{id}', [OrderController::class, 'show'])->name('order.show')->middleware('auth');
-Route::get('/my-orders', [OrderController::class, 'myorders'])->name('my.orders')->middleware('auth');
-
-Route::group([], function () {
-    Route::get('/coupons/create', function () {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
-        }
-        return app(CouponController::class)->create();
-    })->name('coupon.create');
-
-    Route::post('/coupons/add', function () {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
-        }
-        return app(CouponController::class)->store(request());
-    })->name('coupon.store');
-
-    Route::get('/coupons', function () {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
-        }
-        return app(CouponController::class)->index();
-    })->name('coupon.list');
-
-    Route::get('/coupons/edit/{id}', function ($id) {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
-        }
-        return app(CouponController::class)->edit($id);
-    })->name('coupon.edit');
-
-    Route::put('/coupons/update/{id}', function ($id) {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
-        }
-        return app(CouponController::class)->update(request(), $id);
-    })->name('coupon.update');
-
-    Route::delete('/coupons/delete/{id}', function ($id) {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
-        }
-        return app(CouponController::class)->destroy($id);
-    })->name('coupon.delete');
-
-    Route::post('/apply-coupon', function () {
-        if (!Auth::check() || !Auth::user()->isAdmin()) {
-            abort(403, 'Unauthorized action.');
-        }
-        return app(CouponController::class)->applyCoupon(request());
-    })->name('apply.coupon');
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/coupons/create', [CouponController::class, 'create'])->name('coupon.create');
+    Route::post('/coupons/add', [CouponController::class, 'store'])->name('coupon.store');
+    Route::get('/coupons', [CouponController::class, 'index'])->name('coupon.list');
+    Route::get('/coupons/edit/{id}', [CouponController::class, 'edit'])->name('coupon.edit');
+    Route::put('/coupons/update/{id}', [CouponController::class, 'update'])->name('coupon.update');
+    // Route::post('/coupons/delete/{id}', [CouponController::class, 'destroy'])->name('coupon.delete');
+    Route::delete('/coupons/delete/{id}', [CouponController::class, 'destroy'])->name('coupon.delete');
+    Route::post('/apply-coupon', [CouponController::class, 'applyCoupon'])->name('apply.coupon');
 });
+
 Route::group(['middleware' => 'auth'], function ()  {
     Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
@@ -104,6 +49,11 @@ Route::get('/shop', [BaseController::Class, 'shop'])->name('shop');
 Route::get('/aboutus', [BaseController::Class, 'aboutus'])->name('aboutus');
 
 Route::get('/contactus', [BaseController::Class, 'contactus'])->name('contactus');
+// Route::get('/cart', [BaseController::Class, 'cart'])->name('cart');
+// Route::post('/cart', [BaseController::Class, 'cart'])->name('cart');
+
+// Route::post('/cart/{id}', [CartController::class, 'addToCart'])->name('cart');
+
 Route::get('user/login', [BaseController::Class, 'user_login'])->name('user_login');
 Route::post('user/login', [BaseController::Class, 'loginCheck'])->name('loginCheck');
 Route::post('user/register', [BaseController::Class, 'user_store'])->name('user_store');
@@ -168,6 +118,6 @@ Route::group(['middleware' => 'auth'], function () {
     // Route to delete a specific discount
 
 
-    Route::get('/discount/delete/{id}', [DiscountController::class, 'discountDelete'])->name('discount.delete');
+    // Route::get('/discount/delete/{id}', [DiscountController::class, 'discountDelete'])->name('discount.delete');
     // Route::post('/discount/delete/{id}', [DiscountController::class, 'discountDelete'])->name('discount.delete');
 });

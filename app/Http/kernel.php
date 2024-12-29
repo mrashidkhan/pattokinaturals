@@ -13,13 +13,19 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    protected $routeMiddleware = [
-        // ...
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'redirect_if_authenticated' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        // Other middleware...
-    ];
-    
+    // protected $routeMiddleware = [
+    //     // ...
+    //     'auth' => \App\Http\Middleware\Authenticate::class,
+    //     'redirect_if_authenticated' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+    //     // Other middleware...
+    // ];
+
+    // protected $routeMiddleware = [
+    //     // Other middleware
+    //     'admin' => \App\Http\Middleware\AdminMiddleware::class,
+    //     'customer' => \App\Http\Middleware\CustomerMiddleware::class,
+    // ];
+
 
     /**
      * The application's global HTTP middleware stack.
@@ -37,6 +43,12 @@ class Kernel extends HttpKernel
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         \App\Http\Middleware\VerifyCsrfToken::class,
         \Illuminate\Routing\Middleware\SubstituteBindings::class,
+
+    ];
+
+    protected $routeMiddleware = [
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'cust' => \App\Http\Middleware\CustomerMiddleware::class,
     ];
 
     /**

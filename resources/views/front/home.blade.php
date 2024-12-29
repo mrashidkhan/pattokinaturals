@@ -1,6 +1,23 @@
 @extends('front.layout.layout')
 
 @section('slider')
+@if (session('success'))
+            <div class="alert alert-success"
+                style="color:#d4edda ; background-color: black; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger"
+                style="color: white; background-color: black; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                <ul style="list-style-type: none; padding-left: 0;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     <div id="carouselExampleDark" class="carousel carousel-dark slide">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true"
@@ -116,7 +133,7 @@
                                             </a>
                                         </small>
                                         <small class="w-50 text-center py-2">
-                                            <a class="text-body" href="#">
+                                            <a class="text-body" href="{{ route('productview', $value->id) }}">
                                                 <i class="fa fa-shopping-bag text-secondary me-2"></i>Add to cart
                                             </a>
                                         </small>

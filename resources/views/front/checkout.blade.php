@@ -8,7 +8,7 @@
                     <ol class="breadcrumb primary-color mb-0">
                         <li class="breadcrumb-item"><a class="white-text" href="{{ route('home') }}">Home</a></li>
                         <li class="breadcrumb-item"><a class="white-text" href="{{ route('shop') }}">Shop</a></li>
-                        <li class="breadcrumb-item">Cart</li>
+                        <li class="breadcrumb-item">Checkout</li>
                     </ol>
                 </div>
             </div>
@@ -94,7 +94,7 @@
                                                             <button class="btn btn-sm btn-dark btn-plus p-2 pt-1 pb-1"
                                                                 data-id="{{ $item['id'] }}">
                                                                 <i class="fa fa-plus"></i>
-                                                                </ </button>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -111,21 +111,90 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-
                             @else
-
                                 <h1> Your cart is empty. </h1>
 
                             @endif
                         </div>
+                        <h2>Checkout</h2>
+
+
+                        <form action="{{ route('order.complete') }}" method="POST">
+                            @csrf
+
+                            <h4>Shipping Information</h4>
+                            <div class="form-group">
+                                <label for="first_name">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name', $customerData->first_name ?? '') }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('last_name', $customerData->last_name ?? '') }}" required>
+                            </div>
+
+                            {{-- <div class="form-group" style="display: none">
+                                <label for="shipping_address">Shipping Address</label>
+                                <input type="text" class="form-control" id="shipping_address" name="shipping_address" value="{{ old('shipping_address', $customerData->shipping_address ?? '') }}" required>
+                            </div> --}}
+
+                            <div class="form-group">
+                                <label for="billing_address">Billing Address</label>
+                                <input type="text" class="form-control" id="billing_address" name="billing_address" value="{{ old('billing_address', $customerData->billing_address ?? '') }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" class="form-control" id="city" name="city" value="{{ old('city', $customerData->city ?? '') }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="postal_code">Postal Code (optional)</label>
+                                <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ old('postal_code', $customerData->postal_code ?? '') }}">
+                            </div>
+
+                            {{-- <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name ="email" value="{{ $customerData->email ?? '' }}" readonly>
+                            </div> --}}
+                            {{-- <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="text" id="email" value="{{ $customer->user->email }}" readonly>
+                            </div> --}}
+
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" value="{{ old('phone', $customerData->phone ?? '') }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <input type="text" class="form-control" id="country" name="country" value="{{ old('country', $customerData->country ?? '') }}" required>
+                            </div>
+
+                            <h4 class="mt-5">Payment Method</h4>
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select class="form-control" name="payment_method" required>
+                                    <option value="cod">Cash on Delivery (COD)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn-dark btn btn-block mt-3">Complete Order</button>
+                        </form>
+
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
                     </div>
                     <div class="col-md-4">
                         <div class="card cart-summery">
                             <div class="sub-title">
-                                <h2 class="bg-white">Cart Summary</h2>
+                                <h2 class="bg-white">Order Summary</h2>
                             </div>
-                            <div class="card-body">
-                                @php
+                            @php
                                     // Initialize variables
                                     $subtotal = 0; // Initialize subtotal variable
                                     $couponDiscount = 0; // Initialize coupon discount variable
@@ -150,44 +219,77 @@
                                     // Store grandTotal in the session
                                     session(['grantTotal' => $grandTotal]);
                                 @endphp
-                                <div class="d-flex justify-content-between pb-2">
-                                    <div>Subtotal</div>
-                                    <div>Rs{{ number_format($subtotal, 2) }}</div>
-                                </div>
-                                <div class="d-flex justify-content-between pb-2">
-                                    <div>Shipping</div>
-                                    <div>Rs{{ number_format($shipping, 2) }}</div>
-                                </div>
 
-                                <div class="d-flex justify-content-between summery-end">
-                                    <div>Grand Total</div>
+                            <div class="table-responsive">
+                                @if (session('cart') && count(session('cart')) > 0)
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $subtotal = 0; // Initialize subtotal variable
+                                            @endphp
+                                            @foreach (session('cart', []) as $key => $item)
+                                                <tr>
+                                                    @php
+                                                        $itemTotalPrice = $item['price'] * $item['quantity']; // Calculate total price for the current item
+                                                        $subtotal += $itemTotalPrice; // Add to subtotal
+                                                    @endphp
+                                                    <td>
+                                                        <div class="d-flex align-items-center justify-content-left">
+                                                            <h6 class="ml-2">{{ $item['name'] }} Gram {{ number_format($item['weight']) }}</h6>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {{ number_format($item['quantity']) }}
+                                                    </td>
+                                                    <td>
+                                                        Rs{{ number_format($itemTotalPrice, 2) }} <!-- Display item total price -->
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
 
-                                    <div>Rs{{ number_format($grandTotal, 2) }}</div>
-                                </div>
+                                    <div class="d-flex justify-content-between summery-end">
+                                        <div><strong>Subtotal</strong></div>
+                                        <div>Rs{{ number_format($subtotal, 2) }}</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between pb-2">
+                                        <div>Shipping</div>
+                                        <div>Rs{{ number_format($shipping, 2) }}</div>
+                                    </div>
 
+                                    <div class="d-flex justify-content-between summery-end">
+                                        <div><strong>Grand Total</strong></div>
+                                        <div>Rs{{ number_format($grandTotal, 2) }}</div> <!-- Ensure $grandTotal is calculated correctly -->
+                                    </div>
 
-                                <div class="d-flex justify-content-between summery-end">
-                                    <div>Coupon Discount</div>
-                                    <div>Rs{{ number_format(session('coupondiscount', 0), 2) }}</div>
+                                    <div class="input-group apply-coupon mt-4">
+                                        <input type="text" id="coupon_code" name="coupon" placeholder="Coupon Code" class="form-control">
+                                        <button class="btn btn-dark" type="button" id="apply_coupon_button">Apply Coupon</button>
+                                    </div>
+                                    <div id="coupon_message" class="mt-2"></div>
+                                    {{-- <div class="pt-5">
+                                        <a href="{{ route('order.complete') }}" class="btn-dark btn btn-block w-100">Order Now</a>
+                                    </div> --}}
 
-                                </div>
-
-                                {{-- <div class="pt-5">
-                                    <a href="{{ route('cart.checkout') }}" class="btn-dark btn btn-block w-100">Proceed to
-                                        Checkout</a>
-                                </div> --}}
-                                <div class="pt-5">
-                                    <a href="{{ route('cart.checkout') }}" class="btn-dark btn btn-block w-100" id="checkoutButton">Proceed to Checkout</a>
-                                </div>
+                                    <div class="pt-2">
+                                        <a href="{{ route('cart.view') }}" class="btn-dark btn btn-block w-100">Continue Shopping</a>
+                                    </div>
+                                @else
+                                    <h3>Your cart is empty.</h3> <!-- Changed to h3 for better semantics -->
+                                @endif
                             </div>
                         </div>
 
-                        <div class="input-group apply-coupon mt-4">
-                            <input type="text" id="coupon_code" name="coupon" placeholder="Coupon Code"
-                                class="form-control">
-                            <button class="btn btn-dark" type="button" id="apply_coupon_button">Apply Coupon</button>
-                        </div>
-                        <div id="coupon_message" class="mt-2"></div>
+
+
                     </div>
                 </div>
             </div>
@@ -249,15 +351,11 @@
             });
         });
     </script>
-    <script>
-        document.getElementById('checkoutButton').addEventListener('click', function(event) {
-            // Assuming $grandTotal is available in JavaScript
-            var grandTotal = {{ $grandTotal }}; // Make sure to pass the PHP variable to JavaScript
 
-            if (grandTotal < 1000) {
-                event.preventDefault(); // Prevent the default action of the link
-                alert('Can not proceed to checkout due to empty cart');
-            }
-        });
-    </script>
+<script>
+    // JavaScript to copy billing address to shipping address
+    document.getElementById('shipping_address').addEventListener('input', function() {
+        document.getElementById('billing_address').value = this.value;
+    });
+</script>
 @endsection

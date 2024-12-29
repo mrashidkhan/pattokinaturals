@@ -2,17 +2,39 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
-    public function up()
-{
-    Schema::create('orders', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->decimal('total', 10, 2);
-        $table->timestamps();
-    });
-}
+    use HasFactory;
+
+    // Specify the table if it's not the plural form of the model name
+    protected $table = 'orders';
+
+    // Define the fillable attributes
+    protected $fillable = [
+        'customer_id',
+        'payment_method',
+        'billing_address',
+        // 'shipping_address',
+    ];
+
+    // Define the relationship with the Customer model
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function getGrandTotalAttribute()
+    {
+        return $this->items()->sum(DB::raw('price * quantity'));
+    }
+
 }

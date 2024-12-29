@@ -136,7 +136,7 @@
             </div>
             </div>
         </section>
-        <div container bg-white p-6>
+        {{-- <div container bg-white p-6>
             <section class="pt-5 section-8">
                 <div class="container">
                     <div class="section-title text-center mb-4">
@@ -182,7 +182,7 @@
 
 
                 </div>
-        </div>
+        </div> --}}
         </section>
         </div>
         <!-- Bootstrap JS (include this if not already added) -->
